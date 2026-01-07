@@ -14,6 +14,15 @@ import 'screens/main_navigation_screen.dart';
 import 'widgets/database_initialization_screen.dart';
 import 'database/database_helper.dart';
 
+/// O ponto de entrada principal da aplicação aBible.
+///
+/// Este método inicializa todos os serviços essenciais antes de executar o aplicativo,
+/// incluindo:
+/// - Binding do Flutter.
+/// - Suporte a banco de dados para desktop.
+/// - Gerenciamento de wakelock para manter a tela acesa.
+/// - Google Mobile Ads.
+/// - Serviços de compra, tema, fonte, marcadores e navegação.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -65,13 +74,29 @@ void main() async {
   ));
 }
 
+/// O widget raiz da aplicação aBible.
+///
+/// Este widget é responsável por configurar o `MultiProvider` que disponibiliza
+/// todos os serviços para a árvore de widgets.
 class MyApp extends StatefulWidget {
+  /// O gerenciador de temas para o aplicativo.
   final ThemeManager themeManager;
+
+  /// O serviço de compras para gerenciar a versão PRO.
   final PurchaseService purchaseService;
+
+  /// O gerenciador de fontes para personalizar a leitura.
   final FontManager fontManager;
+
+  /// O provedor de marcadores para gerenciar os versículos salvos.
   final BookmarksProvider bookmarksProvider;
+
+  /// O provedor de navegação para controlar a tela principal.
   final NavigationProvider navigationProvider;
   
+  /// Cria uma instância de [MyApp].
+  ///
+  /// Todos os parâmetros são obrigatórios e devem ser serviços inicializados.
   const MyApp({
     super.key, 
     required this.themeManager, 
@@ -85,6 +110,11 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+/// O estado para o [MyApp] widget.
+///
+/// Gerencia a lógica de inicialização do banco de dados e decide qual tela
+/// exibir: uma tela de carregamento, a tela de inicialização do banco de dados,
+/// ou a tela principal de navegação.
 class _MyAppState extends State<MyApp> {
   bool _isDatabaseInitialized = false;
   bool _isCheckingDatabase = true;
@@ -95,6 +125,10 @@ class _MyAppState extends State<MyApp> {
     _checkDatabaseInitialization();
   }
 
+  /// Verifica se o banco de dados da Bíblia já foi inicializado.
+  ///
+  /// Se o banco de dados estiver pronto, exibe a tela principal. Caso contrário,
+  /// exibe a tela de inicialização para que o usuário possa baixar os dados.
   Future<void> _checkDatabaseInitialization() async {
     try {
       // Verificar se o sistema está inicializado
@@ -124,6 +158,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  /// Callback executado quando a inicialização do banco de dados é concluída com sucesso.
   void _onDatabaseInitializationComplete() {
     setState(() {
       _isDatabaseInitialized = true;

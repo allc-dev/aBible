@@ -3,12 +3,20 @@ import 'package:path/path.dart';
 import 'bible_database_manager.dart';
 import 'database_migrations.dart';
 
-/// Callback para reportar progresso da inicialização
+/// Assinatura para a função de callback que reporta o progresso da inicialização do banco de dados.
 typedef InitializationProgressCallback = void Function(String message, double progress);
 
-/// Gerenciador principal para o Bible Reader - apenas Bíblias e configurações
+/// Classe singleton que gerencia todos os bancos de dados do aplicativo.
+///
+/// Esta classe é responsável por:
+/// - Inicializar o banco de dados de configuração (`bible_reader_config.db`).
+/// - Gerenciar a extração e instalação das bases de dados da Bíblia.
+/// - Fornecer acesso aos gerenciadores de banco de dados.
+/// - Abstrair as operações de CRUD para marcadores e configurações.
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
+
+  /// Retorna a instância única de [DatabaseHelper].
   factory DatabaseHelper() => _instance;
   DatabaseHelper._internal();
   
@@ -17,7 +25,14 @@ class DatabaseHelper {
   
   bool _initialized = false;
   
-  /// Inicializa o sistema de bancos do Bible Reader
+  /// Inicializa todo o sistema de banco de dados do aplicativo.
+  ///
+  /// Este método executa as seguintes etapas:
+  /// 1. Instala as bases de dados da Bíblia a partir dos assets.
+  /// 2. Inicializa o banco de dados de configuração, criando tabelas se necessário.
+  ///
+  /// Opcionalmente, aceita um [onProgress] callback para reportar o progresso
+  /// da inicialização para a UI.
   Future<void> initialize({InitializationProgressCallback? onProgress}) async {
     if (_initialized) return;
     
@@ -110,7 +125,9 @@ class DatabaseHelper {
     }
   }
 
-  /// Getter para o gerenciador das Bíblias
+  /// Retorna o gerenciador de banco de dados da Bíblia.
+  ///
+  /// Lança uma exceção se o [DatabaseHelper] não tiver sido inicializado.
   BibleDatabaseManager get bibleManager {
     if (_bibleManager == null) {
       throw Exception('Bible Reader não foi inicializado');
@@ -118,7 +135,9 @@ class DatabaseHelper {
     return _bibleManager!;
   }
 
-  /// Getter para o banco de configurações
+  /// Retorna a instância do banco de dados de configuração.
+  ///
+  /// Lança uma exceção se o [DatabaseHelper] não tiver sido inicializado.
   Database get configDatabase {
     if (_configDatabase == null) {
       throw Exception('Banco de configurações não foi inicializado');
@@ -126,12 +145,15 @@ class DatabaseHelper {
     return _configDatabase!;
   }
 
-  /// Verifica se está inicializado
+  /// Retorna `true` se o sistema de banco de dados foi inicializado com sucesso.
   bool get isInitialized => _initialized;
 
   // ===== MÉTODOS DE MARCAÇÕES =====
 
-  /// Adiciona uma marcação com múltiplos versículos
+  /// Adiciona um novo marcador ao banco de dados.
+  ///
+  /// Requer [bookName], [chapter], [verses] e [bibleVersion].
+  /// Opcionalmente, pode incluir uma [note].
   Future<void> addBookmark({
     required String bookName,
     required int chapter,

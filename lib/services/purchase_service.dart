@@ -4,9 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Serviço de compras no app (Versão PRO)
+/// Gerencia as compras no aplicativo (IAP) para a versão PRO.
+///
+/// Esta classe é um `ChangeNotifier` que encapsula a lógica de:
+/// - Verificar a disponibilidade de compras.
+/// - Carregar produtos da loja.
+/// - Iniciar o fluxo de compra.
+/// - Restaurar compras anteriores.
+/// - Salvar e carregar o status da compra localmente.
 class PurchaseService extends ChangeNotifier {
+  /// O ID do produto para a versão PRO.
   static const String _kProVersionId = 'pro_bible';
+
+  /// A chave usada para salvar o status da compra no `SharedPreferences`.
   static const String _kPurchaseStatusKey = 'pro_version_purchased';
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
@@ -18,18 +28,33 @@ class PurchaseService extends ChangeNotifier {
   List<ProductDetails> _products = [];
   String _purchaseError = '';
 
+  /// Retorna `true` se a loja de aplicativos está disponível.
   bool get isAvailable => _isAvailable;
+
+  /// Retorna `true` se um processo de compra está em andamento.
   bool get isPurchasing => _isPurchasing;
+
+  /// Retorna `true` se o usuário adquiriu a versão PRO.
   bool get isProVersion => _isProVersion;
+
+  /// A lista de produtos disponíveis para compra.
   List<ProductDetails> get products => _products;
+
+  /// Uma mensagem de erro, se ocorrer algum problema durante a compra.
   String get purchaseError => _purchaseError;
+
+  /// O ID do produto para a versão PRO.
   String get proVersionId => _kProVersionId;
 
+  /// Cria uma nova instância de [PurchaseService] e inicia o processo de inicialização.
   PurchaseService() {
     _initialize();
   }
 
-  /// Carrega status PRO rapidamente (antes da UI iniciar)
+  /// Carrega o status da compra a partir do `SharedPreferences` de forma síncrona.
+  ///
+  /// Este método é útil para verificar o status da versão PRO no início do aplicativo,
+  /// antes que a UI seja construída.
   Future<void> loadPurchaseStatusSync() async {
     final prefs = await SharedPreferences.getInstance();
     _isProVersion = prefs.getBool(_kPurchaseStatusKey) ?? false;

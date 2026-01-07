@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Gerenciador global do tamanho da fonte para todo o app
+/// Gerencia as configurações de fonte para a leitura da Bíblia.
+///
+/// Esta classe singleton é um `ChangeNotifier` que permite:
+/// - Carregar e salvar o tamanho da fonte preferido do usuário.
+/// - Aumentar, diminuir e redefinir o tamanho da fonte.
+/// - Fornecer os tamanhos de fonte permitidos para a UI.
 class FontManager extends ChangeNotifier {
   static final FontManager _instance = FontManager._internal();
+
+  /// Retorna a instância única de [FontManager].
   factory FontManager() => _instance;
   FontManager._internal();
 
@@ -16,25 +23,28 @@ class FontManager extends ChangeNotifier {
   double _fontSize = _defaultFontSize;
   bool _isInitialized = false;
 
-  /// Tamanho atual da fonte
+  /// O tamanho da fonte atualmente selecionado.
   double get fontSize => _fontSize;
 
-  /// Valores possíveis do slider (de 2 em 2)
+  /// A lista de tamanhos de fonte permitidos que o usuário pode selecionar.
   List<double> get allowedSizes => [16, 18, 20, 22, 24, 26, 28, 30, 32];
 
-  /// Tamanho mínimo
+  /// O tamanho mínimo da fonte permitido.
   double get minSize => _minFontSize;
 
-  /// Tamanho máximo
+  /// O tamanho máximo da fonte permitido.
   double get maxSize => _maxFontSize;
 
-  /// Número de divisões do slider
-  int get divisions => allowedSizes.length - 1; // 8 divisões para 9 valores
+  /// O número de divisões para um slider de seleção de fonte.
+  int get divisions => allowedSizes.length - 1;
 
-  /// Se foi inicializado
+  /// Retorna `true` se o [FontManager] foi inicializado.
   bool get isInitialized => _isInitialized;
 
-  /// Inicializa o gerenciador carregando a fonte salva
+  /// Inicializa o [FontManager] carregando o tamanho da fonte salvo
+  /// do `SharedPreferences`.
+  ///
+  /// Se nenhum tamanho de fonte for encontrado, usa o valor padrão.
   Future<void> initialize() async {
     if (_isInitialized) return;
     

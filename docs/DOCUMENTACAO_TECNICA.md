@@ -71,3 +71,23 @@ O aplicativo utiliza o `sqflite` para gerenciar a base de dados. O `DatabaseHelp
 
 -   **`bible_reader_config.db`**: Base de dados de configurações que armazena as preferências do usuário, marcadores e histórico de leitura.
 -   **Bases de Dados da Bíblia**: As bases de dados da Bíblia (ex: `nvi.db`, `kjv.db`) são extraídas dos assets do aplicativo e instaladas na primeira inicialização.
+
+## 7. Fluxo de Dados
+
+O fluxo de dados do aplicativo segue o padrão do `Provider`, onde os widgets da UI reagem a mudanças de estado nos serviços.
+
+1.  **Ação do Usuário**: Um usuário interage com um widget na tela (ex: clica em um botão para mudar o tema).
+2.  **Chamada de Serviço**: O widget notifica o serviço correspondente (ex: `ThemeManager.setTheme(...)`).
+3.  **Atualização do Estado**: O serviço atualiza seu estado interno e notifica os ouvintes através do `notifyListeners()`.
+4.  **Reconstrução da UI**: Os widgets que estão ouvindo as mudanças no serviço (usando `Consumer` ou `Provider.of`) são reconstruídos para refletir o novo estado.
+
+## 8. Descrição Detalhada dos Serviços
+
+-   **`ThemeManager`**: Gerencia o tema do aplicativo (claro, escuro, etc.) e notifica a UI sobre mudanças.
+-   **`PurchaseService`**: Lida com compras no aplicativo, verifica o status da versão PRO e disponibiliza esse estado para o restante do aplicativo.
+-   **`FontManager`**: Gerencia as preferências de fonte do usuário, como tamanho e tipo de fonte.
+-   **`BookmarksProvider`**: Adiciona, remove e busca marcadores de versículos no banco de dados.
+-   **`NavigationProvider`**: Gerencia o estado de navegação da barra de navegação principal.
+-   **`BibleMetadata`**: Carrega e fornece metadados sobre as Bíblias, como a lista de livros e o número de capítulos.
+-   **`BibleSettingsService`**: Gerencia as configurações de leitura da Bíblia, como a versão preferida.
+-   **`ReadingPositionService`**: Salva e recupera a última posição de leitura do usuário.

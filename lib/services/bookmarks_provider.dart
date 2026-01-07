@@ -1,19 +1,31 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 
+/// Gerencia o estado dos marcadores (favoritos) do usuário.
+///
+/// Esta classe é um `ChangeNotifier` que:
+/// - Carrega os marcadores do banco de dados.
+/// - Fornece a lista de marcadores para a UI.
+/// - Permite adicionar, remover e atualizar marcadores.
+/// - Expõe um estado de carregamento (`isLoading`).
 class BookmarksProvider with ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> _bookmarks = [];
   bool _isLoading = false;
 
+  /// A lista de marcadores formatada para exibição.
   List<Map<String, dynamic>> get bookmarks => _bookmarks;
+
+  /// Retorna `true` se os marcadores estiverem sendo carregados do banco de dados.
   bool get isLoading => _isLoading;
 
+  /// Cria uma nova instância de [BookmarksProvider].
   BookmarksProvider() {
-    // Não carregar automaticamente no construtor para evitar problemas de inicialização
-    // O carregamento será feito manualmente quando necessário
+    // O carregamento de marcadores é feito manualmente através de `loadBookmarks`
+    // para garantir que o `DatabaseHelper` já esteja inicializado.
   }
 
+  /// Carrega a lista de marcadores do banco de dados e notifica os ouvintes.
   Future<void> loadBookmarks() async {
     try {
       _isLoading = true;
