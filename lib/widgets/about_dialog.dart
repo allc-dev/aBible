@@ -76,7 +76,7 @@ void showAppAboutDialog(BuildContext context) {
           ),
           ElevatedButton.icon(
             onPressed: () {
-              const pixKey = 'allc.dev@hotmail.com';
+              const pixKey = 'allc.pix@outlook.com';
               Clipboard.setData(const ClipboardData(text: pixKey));
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
