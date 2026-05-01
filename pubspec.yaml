@@ -2,7 +2,7 @@ name: a_bible
 description: Leitor de Bíblia com funcionalidades avançadas - leitura, bookmarks, temas personalizados e muito mais
 publish_to: 'none'
 
-version: 2.0.4+8
+version: 2.0.5+9
 
 environment:
   sdk: ^3.8.1
@@ -64,6 +64,7 @@ flutter_icons:
 # Splash screen configuration
 flutter_native_splash:
   color: "#ffffff"
+  color_dark: "#ffffff"
   image: assets/icon.png
   android: true
   ios: false
